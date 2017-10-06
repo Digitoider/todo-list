@@ -19,8 +19,8 @@ namespace todo_list
             ItemEventHandler EscapeHandler = () => { return; };
             menu.AddItem("Показать список", todoListhandlers.showList, EscapeHandler);
             menu.AddItem("Добавить задачу в список", todoListhandlers.addItem, EscapeHandler);
-            menu.AddItem("Редактировать дело из списка", todoListhandlers.editItem, EscapeHandler);
-            menu.AddItem("Удалить дело из списка", todoListhandlers.deleteItem, EscapeHandler);
+            menu.AddItem("Редактировать задачу из списка", todoListhandlers.editItem, EscapeHandler);
+            menu.AddItem("Удалить задачу из списка", todoListhandlers.deleteItem, EscapeHandler);
 
             menu.Activate();
         }
