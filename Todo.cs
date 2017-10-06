@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace todo_list
 {
-    class Taks
+    class Todo
     {
         public int Id { get; set; }
-        public string Description { get; set; }
+        public string Task { get; set; }
     }
 }

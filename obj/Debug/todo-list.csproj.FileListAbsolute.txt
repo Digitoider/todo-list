@@ -1,0 +1,11 @@
+C:\Users\Alexander\Documents\Visual Studio 2017\Projects\todo-list\todo-list\bin\Debug\todo-list.exe.config
+C:\Users\Alexander\Documents\Visual Studio 2017\Projects\todo-list\todo-list\bin\Debug\todo-list.exe
+C:\Users\Alexander\Documents\Visual Studio 2017\Projects\todo-list\todo-list\bin\Debug\todo-list.pdb
+C:\Users\Alexander\Documents\Visual Studio 2017\Projects\todo-list\todo-list\bin\Debug\EntityFramework.dll
+C:\Users\Alexander\Documents\Visual Studio 2017\Projects\todo-list\todo-list\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Alexander\Documents\Visual Studio 2017\Projects\todo-list\todo-list\bin\Debug\EntityFramework.xml
+C:\Users\Alexander\Documents\Visual Studio 2017\Projects\todo-list\todo-list\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Alexander\Documents\Visual Studio 2017\Projects\todo-list\todo-list\obj\Debug\todo-list.csprojResolveAssemblyReference.cache
+C:\Users\Alexander\Documents\Visual Studio 2017\Projects\todo-list\todo-list\obj\Debug\todo-list.csproj.CoreCompileInputs.cache
+C:\Users\Alexander\Documents\Visual Studio 2017\Projects\todo-list\todo-list\obj\Debug\todo-list.exe
+C:\Users\Alexander\Documents\Visual Studio 2017\Projects\todo-list\todo-list\obj\Debug\todo-list.pdb
