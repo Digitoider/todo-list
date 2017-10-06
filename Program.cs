@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace todo_list
 {
@@ -10,6 +11,7 @@ namespace todo_list
     {
         List<Item> items = new List<Item>();
         private int activeItem;
+        public string HelpMessage { get; set; }
 
         public Func<int> HandleEscape { get; internal set; }
 
@@ -25,15 +27,7 @@ namespace todo_list
 
         public void RemoveItemById(int id)
         {
-            Item itemToRemove = null;
-            foreach(var item in items)
-            {
-                if(item.Id == id)
-                {
-                    itemToRemove = item;
-                    break;
-                }
-            }
+            var itemToRemove = FindItemById(id);
             if(itemToRemove != null)
             {
                 items.Remove(itemToRemove);
@@ -42,6 +36,29 @@ namespace todo_list
                 {
                     activeItem = 0;
                 }
+            }
+        }
+
+        public Item FindItemById(int id)
+        {
+            Item itemToReturn = null;
+            foreach (var item in items)
+            {
+                if (item.Id == id)
+                {
+                    itemToReturn = item;
+                    break;
+                }
+            }
+            return itemToReturn;
+        }
+
+        public void RenameItemById(int id, string name)
+        {
+            Item itemToRename = FindItemById(id);
+            if (itemToRename != null)
+            {
+                itemToRename.Name = name;
             }
         }
 
@@ -99,6 +116,11 @@ namespace todo_list
         {
             Console.Clear();
             Console.SetCursorPosition(0, 0);
+            if (!String.IsNullOrEmpty(HelpMessage))
+            {
+                Console.WriteLine(HelpMessage);
+            }
+            
             foreach(var item in items)
             {
                 if (item == items[activeItem])
@@ -135,12 +157,13 @@ namespace todo_list
         static void Main(string[] args)
         {
             var menu = new Menu();
+            menu.HelpMessage = "Нажмите ESC для выхода из программы";
             var todoListhandlers = new TodoListHandlers();
-            //menu.HandleEscape = () => { return 0; };
-            menu.AddItem("Показать список", todoListhandlers.showList, () => { return; });
-            menu.AddItem("Добавить задачу в список", todoListhandlers.addItem, () => { return; });
-            menu.AddItem("Редактировать дело из списка", todoListhandlers.editItem, () => { return; });
-            menu.AddItem("Удалить дело из списка", todoListhandlers.deleteItem, () => { return; });
+            ItemEventHandler EscapeHandler = () => { return; };
+            menu.AddItem("Показать список", todoListhandlers.showList, EscapeHandler);
+            menu.AddItem("Добавить задачу в список", todoListhandlers.addItem, EscapeHandler);
+            menu.AddItem("Редактировать дело из списка", todoListhandlers.editItem, EscapeHandler);
+            menu.AddItem("Удалить дело из списка", todoListhandlers.deleteItem, EscapeHandler);
 
             menu.Activate();
         }
@@ -153,6 +176,7 @@ namespace todo_list
             using (var db = new TaskContext())
             {
                 var list = new Menu();
+                list.HelpMessage = "Нажмите ESC, чтобы вернуться в меню";
                 list.HandleEscape = () => { return 0; };
                 foreach(var todo in db.Todos)
                 {
@@ -160,37 +184,58 @@ namespace todo_list
                 }
                 list.Activate();
             }
-                //Console.WriteLine("Displaing list isn't done yet");
         }
         public void editItem()
         {
+            using (var db = new TaskContext())
+            {
+                var list = new Menu();
+                list.HelpMessage = "Нажмите ESC для возврата в МЕНЮ. Для редактирования записи нажмите ENTER";
+                list.HandleEscape = () => {  return 0; };
+                foreach (var todo in db.Todos)
+                {
+                    ItemEventHandler handleEnter = () => {
+                        int id = todo.Id;
+
+                        int y = db.Todos.Count();
+                        Console.SetCursorPosition(0, ++y);
+
+                        Console.Write("Редактирование записи: ");
+                        string dataToEdit = todo.Task;
+                        
+                        SendKeys.SendWait(dataToEdit);
+
+                        var updatedTask = Console.ReadLine();
+
+                        todo.Task = updatedTask;
+                        db.SaveChanges();
+                        list.RenameItemById(id, updatedTask);
+                    };
+                    ItemEventHandler handleEscape = () => { return; };
+                    var item = new Item(todo.Task, handleEnter, handleEscape);
+                    item.Id = todo.Id;
+                    list.AddItem(item);
+                }
+                list.Activate();
+            }
+
+
             Console.WriteLine("Editing list isn't done yet");
         }
+        
         public void deleteItem()
         {
             using (var db = new TaskContext())
             {
                 var list = new Menu();
+                list.HelpMessage = "Нажмите ESC для возврата в МЕНЮ. Для удаления записи нажмите ENTER";
                 list.HandleEscape = () => { return 0; };
-
-                //for (int i = 0; i < db.Todos.Count(); i++)
-                //{
-                //    var todo = db.Todos.ToArray()[i];
-                //    list.AddItem(todo.Task, () => {
-                //        db.Todos.Remove(todo);
-                //        db.SaveChanges();
-                //        /*TODO удаление из списка list для перерисовки*/
-                //        list.RemoveItemAt(i);
-                //    }, () => { return; });
-                //}
-
                 foreach (var todo in db.Todos)
                 {
                     ItemEventHandler handleEnter = () => {
                         int id = todo.Id;
                         db.Todos.Remove(todo);
                         db.SaveChanges();
-                        /*TODO удаление из списка list для перерисовки*/
                         list.RemoveItemById(id);
                     };
                     ItemEventHandler handleEscape = () => { return; };
@@ -200,7 +245,6 @@ namespace todo_list
                 }
                 list.Activate();
             }
-            Console.WriteLine("Deleting list isn't done yet");
         }
         public void addItem()
         {
